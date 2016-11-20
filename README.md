@@ -1,7 +1,7 @@
 # delivery-for-vscode-tasks
 copy(delivery) to multiple work directories
 
-tasks.json
+make tasks.json file in .vscode\
 ```json
 {
     "version": "0.1.0",
