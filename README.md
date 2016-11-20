@@ -2,7 +2,7 @@
 copy(delivery) to multiple work directories
 
 tasks.json
-
+```json
 {
     "version": "0.1.0",
     "command": "python",
@@ -21,3 +21,4 @@ tasks.json
         }
     ]
 }
+```
