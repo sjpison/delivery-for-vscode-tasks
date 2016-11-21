@@ -17,14 +17,17 @@ def getConfigSectionMap(section):
     return dict1
 
 def localCopying(source, location):
-    dest = os.path.join(location, source)
-    print(source + " -> " + dest)
+    if isinstance(source, str):
+        source = [source]
+    for src in source:
+        dest = os.path.join(location, src)
+        print(src + " -> " + dest)
 
-    dstdir = os.path.dirname(dest)
-    if not os.path.isdir(dstdir):
-        os.makedirs(dstdir)
+        dstdir = os.path.dirname(dest)
+        if not os.path.isdir(dstdir):
+            os.makedirs(dstdir)
 
-    shutil.copyfile(source, dest)
+        shutil.copyfile(src, dest)
     return
 
 def getAllFiles(src):
@@ -36,6 +39,7 @@ def getAllFiles(src):
         # vscode and git is pass
         file_name = os.path.relpath(full_file_name, os.getcwd())
         if(file_name.startswith(".vscode") or file_name.startswith(".git")):
+            print("[Ignored] - " + file_name)
             continue
 
         if (os.path.isfile(full_file_name)):
@@ -53,20 +57,11 @@ if(sys.argv[1]!="all"):
     commonprefix = os.path.commonprefix([sys.argv[1], os.getcwd()])
     source = os.path.relpath(sys.argv[1], commonprefix)
 else:
-    source = sys.argv[1]
-
-# ignore under vscode directory
-if(source.startswith(".vscode")):
-    print("[Ignored] - " + source)
-    sys.exit()
+    source = getAllFiles(os.getcwd())
 
 # do copying
 for section in getConfigSections():
     sectionMap = getConfigSectionMap(section)
     if(sectionMap["method"]=="local"):
         print("[" + section + " Copying]")
-        if(source=="all"):
-            for src in getAllFiles(os.getcwd()):
-                localCopying(src, sectionMap["location"])
-        else:
-            localCopying(source, sectionMap["location"])
+        localCopying(source, sectionMap["location"])
