@@ -22,6 +22,10 @@ tasks.json
         {
             "taskName": "all",
             "args": ["all"]
+        },
+        {
+            "taskName": "ftpCheck",
+            "args": ["ftpCheck"]
         }
     ]
 }
