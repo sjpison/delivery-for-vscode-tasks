@@ -2,6 +2,7 @@
 copy(delivery) to multiple work directories
 
 Tasks are defined in a workspace tasks.json file and VS Code has templates for common task runners. In the Command Palette (Ctrl+Shift+P), you can filter on 'task' and can see the various Task related commands.
+
 Select the Tasks: Configure Task Runner command and you will see a list of task runner templates. Select Others to create a task which runs an external command.
 
 tasks.json
@@ -25,3 +26,5 @@ tasks.json
     ]
 }
 ```
+
+delivery.py and delivery-conf.ini files copy to .vscode/
