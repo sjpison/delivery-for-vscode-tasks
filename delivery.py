@@ -1,4 +1,4 @@
-import subprocess, configparser, shutil, os, sys
+import subprocess, configparser, shutil, os, sys, ftplib
 
 def getConfigSections():
     return config.sections()
@@ -17,8 +17,6 @@ def getConfigSectionMap(section):
     return dict1
 
 def localCopying(source, location):
-    if isinstance(source, str):
-        source = [source]
     for src in source:
         dest = os.path.join(location, src)
         print(src + " -> " + dest)
@@ -28,6 +26,22 @@ def localCopying(source, location):
             os.makedirs(dstdir)
 
         shutil.copyfile(src, dest)
+    return
+
+def ftpGetLists(options):
+    print("#FTP Connection Check - Get Lists")
+    ftp = ftplib.FTP(options["host"])
+    ftp.login(user=options["userid"], passwd=options["password"])
+    ftp.cwd(options['location'])
+    ftp.retrlines('LIST')
+    return
+    
+def ftpCopying(source, options):
+    print("#FTP Connection Check - Get Lists")
+    ftp = ftplib.FTP(options["host"])
+    ftp.login(user=options["userid"], passwd=options["password"])
+    ftp.cwd(options['location'])
+    #ftp.retrlines('LIST')
     return
 
 def getAllFiles(src):
@@ -61,8 +75,17 @@ config.read("./.vscode/delivery-conf.ini")
 # ignored config
 ignored = [".vscode",".git"]
 
-# source file
-if(sys.argv[1]!="all"):
+# argument check
+if(sys.argv[1]=="all"):
+    source = getAllFiles(os.getcwd())
+elif(sys.argv[1]=="ftpCheck"):
+    for section in getConfigSections():
+        sectionMap = getConfigSectionMap(section)
+        if(sectionMap["method"]=="ftp"):
+            print("["+section+"]")
+            ftpGetLists(sectionMap)
+    sys.exit()
+else:
     commonprefix = os.path.commonprefix([sys.argv[1], os.getcwd()])
     source = os.path.relpath(sys.argv[1], commonprefix)
     # single file ignore check
@@ -70,8 +93,7 @@ if(sys.argv[1]!="all"):
         if(source.startswith(ig)):
             print("[Ignored] - " + source)
             sys.exit()
-else:
-    source = getAllFiles(os.getcwd())
+    source = [source]
 
 # do copying
 for section in getConfigSections():
@@ -79,3 +101,5 @@ for section in getConfigSections():
     if(sectionMap["method"]=="local"):
         print("[" + section + " Copying]")
         localCopying(source, sectionMap["location"])
+    elif(sectionMap["method"]=="ftp"):
+        ftpCopying(source, sectionMap)
