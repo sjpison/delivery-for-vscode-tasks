@@ -38,8 +38,14 @@ def getAllFiles(src):
 
         # vscode and git is pass
         file_name = os.path.relpath(full_file_name, os.getcwd())
-        if(file_name.startswith(".vscode") or file_name.startswith(".git")):
-            print("[Ignored] - " + file_name)
+
+        ignore_matched = False
+        for ig in ignored:
+            if(file_name.startswith(ig)):
+                print("[Ignored] - " + file_name)
+                ignore_matched = True
+                break
+        if(ignore_matched):
             continue
 
         if (os.path.isfile(full_file_name)):
@@ -52,10 +58,18 @@ def getAllFiles(src):
 config = configparser.ConfigParser()
 config.read("./.vscode/delivery-conf.ini")
 
+# ignored config
+ignored = [".vscode",".git"]
+
 # source file
 if(sys.argv[1]!="all"):
     commonprefix = os.path.commonprefix([sys.argv[1], os.getcwd()])
     source = os.path.relpath(sys.argv[1], commonprefix)
+    # single file ignore check
+    for ig in ignored:
+        if(source.startswith(ig)):
+            print("[Ignored] - " + source)
+            sys.exit()
 else:
     source = getAllFiles(os.getcwd())
 
