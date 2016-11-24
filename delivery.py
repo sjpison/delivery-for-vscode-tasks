@@ -34,14 +34,42 @@ def ftpGetLists(options):
     ftp.login(user=options["userid"], passwd=options["password"])
     ftp.cwd(options['location'])
     ftp.retrlines('LIST')
+    ftp.quit()
+    return
+
+def ftp_callback(line):
     return
     
 def ftpCopying(source, options):
-    print("#FTP Connection Check - Get Lists")
     ftp = ftplib.FTP(options["host"])
     ftp.login(user=options["userid"], passwd=options["password"])
     ftp.cwd(options['location'])
-    #ftp.retrlines('LIST')
+
+    for src in source:
+        if(os.path.isfile(src)):
+            dirs = []
+            d = os.path.dirname(src)
+
+            while len(d) > 0:
+                try:
+                    if(os.sep!="/"):
+                        d = d.replace("\\","/")
+                    ftp.retrlines("LIST", ftp_callback) # empty directory check, nlst() is error occurred.
+                except ftplib.error_temp:
+                    dirs.insert(0,d)
+                finally:
+                    d=os.path.dirname(d)
+
+            for d in dirs:
+                if(os.sep!="/"):
+                    d = d.replace("\\","/")
+                print("MKD "+d)
+                ftp.mkd(d)
+
+            if(os.sep!="/"):
+                src = src.replace("\\","/")
+            print('STOR '+src)
+            ftp.storbinary('STOR '+src, open(src,'rb'))
     return
 
 def getAllFiles(src):
@@ -99,7 +127,8 @@ else:
 for section in getConfigSections():
     sectionMap = getConfigSectionMap(section)
     if(sectionMap["method"]=="local"):
-        print("[" + section + " Copying]")
+        print("[Local:" + section + " Copying]")
         localCopying(source, sectionMap["location"])
     elif(sectionMap["method"]=="ftp"):
+        print("[FTP:" + section + " Copying]")
         ftpCopying(source, sectionMap)
