@@ -1,3 +1,5 @@
+# version 0.1.0
+
 import subprocess, configparser, shutil, os, sys, ftplib
 
 def getConfigSections():
