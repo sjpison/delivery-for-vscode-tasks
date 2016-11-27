@@ -1,4 +1,4 @@
-# version 0.1.1
+# version 0.1.2
 
 import subprocess, configparser, shutil, os, sys, ftplib
 
@@ -135,3 +135,5 @@ for section in getConfigSections():
     elif(sectionMap["method"]=="ftp"):
         print("[FTP:" + section + " Copying]")
         ftpCopying(source, sectionMap)
+
+print("[Delivery completed]")
