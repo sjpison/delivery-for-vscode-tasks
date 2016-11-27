@@ -1,4 +1,4 @@
-# version 0.1.0
+# version 0.1.1
 
 import subprocess, configparser, shutil, os, sys, ftplib
 
@@ -56,7 +56,8 @@ def ftpCopying(source, options):
                 try:
                     if(os.sep!="/"):
                         d = d.replace("\\","/")
-                    ftp.retrlines("LIST", ftp_callback) # empty directory check, nlst() is error occurred.
+                        
+                    result = ftp.retrlines("LIST "+d, ftp_callback) # empty directory check, nlst() is error occurred.
                 except ftplib.error_temp:
                     dirs.insert(0,d)
                 finally:
