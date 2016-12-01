@@ -1,4 +1,4 @@
-# version 0.1.2
+# version 0.1.3
 
 import subprocess, configparser, shutil, os, sys, ftplib
 
@@ -32,7 +32,8 @@ def localCopying(source, location):
 
 def ftpGetLists(options):
     print("#FTP Connection Check - Get Lists")
-    ftp = ftplib.FTP(options["host"])
+    ftp = ftplib.FTP()
+    ftp.connect(options["host"], int(options["port"]))
     ftp.login(user=options["userid"], passwd=options["password"])
     ftp.cwd(options['location'])
     ftp.retrlines('LIST')
@@ -40,10 +41,12 @@ def ftpGetLists(options):
     return
 
 def ftp_callback(line):
+    print(line)
     return
     
 def ftpCopying(source, options):
-    ftp = ftplib.FTP(options["host"])
+    ftp = ftplib.FTP()
+    ftp.connect(options["host"], int(options["port"]))
     ftp.login(user=options["userid"], passwd=options["password"])
     ftp.cwd(options['location'])
 
@@ -56,10 +59,14 @@ def ftpCopying(source, options):
                 try:
                     if(os.sep!="/"):
                         d = d.replace("\\","/")
-                        
-                    result = ftp.retrlines("LIST "+d, ftp_callback) # empty directory check, nlst() is error occurred.
+                    #lines = []
+                    #result = ftp.retrlines("LIST "+d, lines.append) # empty directory check, nlst() is error occurred.
+                    ftp.mkd(d)
+                    break
                 except ftplib.error_temp:
                     dirs.insert(0,d)
+                except ftplib.error_perm:
+                    continue
                 finally:
                     d=os.path.dirname(d)
 
