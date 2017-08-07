@@ -31,4 +31,19 @@ tasks.json
 }
 ```
 
+delivery.ini
+```ini
+[project name]
+method = ftp
+host = [host name]
+userid = [ftp id]
+password = [password]
+port = 21
+location = /home/user/project/subdir
+
+[local project name]
+method = local
+location = c:\delivery_test
+```
+
 delivery.py and delivery-conf.ini files copy to .vscode/
