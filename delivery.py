@@ -1,4 +1,4 @@
-# version 0.1.3
+# version 0.1.4
 
 import subprocess, configparser, shutil, os, sys, ftplib
 
@@ -54,11 +54,21 @@ def ftpCopying(source, options):
         if(os.path.isfile(src)):
             dirs = []
             d = os.path.dirname(src)
-
+            if(os.sep!="/"):
+                d = d.replace("\\","/")
+            
+            # source location set
+            if(len(options["source_location"])>0 and len(d)>0):
+                d = d.replace(options["source_location"], '', 1)
+            
+            # set destination
+            dest = ''
+            if(len(d)>0):
+                dest += '/'
+            dest += os.path.basename(src)
+                
             while len(d) > 0:
                 try:
-                    if(os.sep!="/"):
-                        d = d.replace("\\","/")
                     #lines = []
                     #result = ftp.retrlines("LIST "+d, lines.append) # empty directory check, nlst() is error occurred.
                     ftp.mkd(d)
@@ -76,10 +86,8 @@ def ftpCopying(source, options):
                 print("MKD "+d)
                 ftp.mkd(d)
 
-            if(os.sep!="/"):
-                src = src.replace("\\","/")
-            print('STOR '+src)
-            ftp.storbinary('STOR '+src, open(src,'rb'))
+            print('STOR '+dest)
+            ftp.storbinary('STOR '+dest, open(src,'rb'))
     return
 
 def getAllFiles(src):
