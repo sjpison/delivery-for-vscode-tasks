@@ -1,4 +1,4 @@
-# version 0.1.4
+# version 0.1.5
 
 import subprocess, configparser, shutil, os, sys, ftplib
 
@@ -18,9 +18,19 @@ def getConfigSectionMap(section):
             dict1[option] = None
     return dict1
 
-def localCopying(source, location):
-    for src in source:
-        dest = os.path.join(location, src)
+def localCopying(source, options):
+    location = options['location']
+
+    for src in source:        
+        if('source_location' in options):
+            if(not src.startswith(options["source_location"].replace("/",os.sep))):
+                continue
+
+            dest = src.replace(options["source_location"].replace("/",os.sep)+os.sep, '', 1)
+            dest = os.path.join(location, dest)
+        else:
+            dest = os.path.join(location, src)
+
         print(src + " -> " + dest)
 
         dstdir = os.path.dirname(dest)
@@ -52,39 +62,43 @@ def ftpCopying(source, options):
 
     for src in source:
         if(os.path.isfile(src)):
-            dirs = []
             d = os.path.dirname(src)
             if(os.sep!="/"):
-                d = d.replace("\\","/")
+                d = d.replace(os.sep,"/")
             
             # source location set
-            if(len(options["source_location"])>0 and len(d)>0):
-                d = d.replace(options["source_location"], '', 1)
-            
+            if('source_location' in options):
+                if(not d.startswith(options["source_location"])):
+                    continue
+                if(d==options["source_location"]):
+                    d = ''
+                else:
+                    d = d.replace(options["source_location"]+'/', '', 1)
+
             # set destination
             dest = ''
             if(len(d)>0):
-                dest += '/'
+                dest = d+'/'
             dest += os.path.basename(src)
-                
-            while len(d) > 0:
+
+            # directories for make
+            dirs = []
+            if(len(d)>0):
+                dirs = d.split('/')
+                for i in range(1, len(dirs)):
+                    if(len(dirs[i])==0):
+                        continue
+                    dirs[i] = dirs[i-1]+"/"+dirs[i]
+
+            # make directories
+            for d in dirs:
                 try:
-                    #lines = []
-                    #result = ftp.retrlines("LIST "+d, lines.append) # empty directory check, nlst() is error occurred.
+                    if(os.sep!="/"):
+                        d = d.replace("\\","/")
                     ftp.mkd(d)
-                    break
-                except ftplib.error_temp:
-                    dirs.insert(0,d)
+                    print("MKD "+d)
                 except ftplib.error_perm:
                     continue
-                finally:
-                    d=os.path.dirname(d)
-
-            for d in dirs:
-                if(os.sep!="/"):
-                    d = d.replace("\\","/")
-                print("MKD "+d)
-                ftp.mkd(d)
 
             print('STOR '+dest)
             ftp.storbinary('STOR '+dest, open(src,'rb'))
@@ -146,7 +160,7 @@ for section in getConfigSections():
     sectionMap = getConfigSectionMap(section)
     if(sectionMap["method"]=="local"):
         print("[Local:" + section + " Copying]")
-        localCopying(source, sectionMap["location"])
+        localCopying(source, sectionMap)
     elif(sectionMap["method"]=="ftp"):
         print("[FTP:" + section + " Copying]")
         ftpCopying(source, sectionMap)

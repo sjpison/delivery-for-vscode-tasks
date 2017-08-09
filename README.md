@@ -39,10 +39,12 @@ host = [host name]
 userid = [ftp id]
 password = [password]
 port = 21
+#source_location = src_location/sub
 location = /home/user/project/subdir
 
 [local project name]
 method = local
+#source_location = src_location/sub
 location = c:\delivery_test
 ```
 
