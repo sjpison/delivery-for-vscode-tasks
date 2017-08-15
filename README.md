@@ -8,9 +8,7 @@ Select the Tasks: Configure Task Runner command and you will see a list of task 
 tasks.json [2.0.0]
 ```json
 {
-    // See https://go.microsoft.com/fwlink/?LinkId=733558
-    // for the documentation about the tasks.json format
-    "version": "2.0.0",
+    "version" : "2.0.0",
     "tasks": [
         {
             "taskName": "singleFile",
