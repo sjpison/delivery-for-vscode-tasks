@@ -1,4 +1,4 @@
-# version 0.1.7
+# version 0.1.8
 
 import subprocess, configparser, shutil, os, sys, ftplib
 
@@ -170,7 +170,7 @@ for i, src in enumerate(source):
         import dukpy
         src_str = dukpy.babel_compile(src_str)['code']
     except ImportError:
-        pass
+        print("[Translate:ES6 to ES5 - Failed]")
     source[i] = src[:-3]+"js"
     print("CREATE "+source[i])
     f = open(source[i], 'wt', encoding="utf-8")
