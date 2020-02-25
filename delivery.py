@@ -1,9 +1,11 @@
-# version 0.1.5
+# version 0.1.6
 
 import subprocess, configparser, shutil, os, sys, ftplib
 
 def getConfigSections():
-    return config.sections()
+    sections = config.sections()
+    sections.remove('common')
+    return sections
 
 def getConfigSectionMap(section):
     dict1 = {}
@@ -21,7 +23,7 @@ def getConfigSectionMap(section):
 def localCopying(source, options):
     location = options['location']
 
-    for src in source:        
+    for src in source:
         if('source_location' in options):
             if(not src.startswith(options["source_location"].replace("/",os.sep))):
                 continue
@@ -131,6 +133,7 @@ def getAllFiles(src):
 # load config
 config = configparser.ConfigParser()
 config.read("./.vscode/delivery-conf.ini")
+common = getConfigSectionMap('common')
 
 # ignored config
 ignored = [".vscode",".git"]
@@ -154,6 +157,25 @@ else:
             print("[Ignored] - " + source)
             sys.exit()
     source = [source]
+
+# es6 translate
+for i, src in enumerate(source):
+    if(not src.endswith('.es6') and common['es6_translate'] != 'Y'):
+        continue
+    f = open(src, 'r')
+    src_str = f.read()
+    f.close()
+    try:
+        print("[Translate:ES6 to ES5]")
+        import dukpy
+        src_str = dukpy.babel_compile(src_str)['code']
+    except ImportError:
+        pass
+    source[i] = src[:-3]+"js"
+    print("CREATE "+source[i])
+    f = open(source[i], 'w')
+    f.write(src_str+" ")
+    f.close()
 
 # do copying
 for section in getConfigSections():

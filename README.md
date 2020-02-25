@@ -5,6 +5,7 @@ Tasks are defined in a workspace tasks.json file and VS Code has templates for c
 
 Select the Tasks: Configure Task Runner command and you will see a list of task runner templates. Select Others to create a task which runs an external command.
 
+## Default Setting
 tasks.json [2.0.0]
 ```json
 {
@@ -73,6 +74,9 @@ tasks.json [0.1.0]
 
 delivery.ini
 ```ini
+[common]
+es6_translate = Y #use DukPy(pypi.org/project/dukpy)
+
 [project name]
 method = ftp
 host = [host name]
@@ -89,3 +93,12 @@ location = c:\delivery_test
 ```
 
 delivery.py and delivery-conf.ini files copy to .vscode/
+
+## ES6 to ES5 translate
+if you want translate ES6 to ES5 then use DukPy(pypi.org/project/dukpy).   
+DukPy Install and set script filename like 'filename.es6' and run.   
+Then automatically save to 'filename.js' and delivered.
+
+## History
+- 0.1.6   
+es6 translate support - use DukPy(pypi.org/project/dukpy)
