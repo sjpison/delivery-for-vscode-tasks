@@ -1,4 +1,4 @@
-# version 0.1.6
+# version 0.1.7
 
 import subprocess, configparser, shutil, os, sys, ftplib
 
@@ -162,7 +162,7 @@ else:
 for i, src in enumerate(source):
     if(not src.endswith('.es6') and common['es6_translate'] != 'Y'):
         continue
-    f = open(src, 'r')
+    f = open(src, 'rt', encoding="utf-8")
     src_str = f.read()
     f.close()
     try:
@@ -173,7 +173,7 @@ for i, src in enumerate(source):
         pass
     source[i] = src[:-3]+"js"
     print("CREATE "+source[i])
-    f = open(source[i], 'w')
+    f = open(source[i], 'wt', encoding="utf-8")
     f.write(src_str+" ")
     f.close()
 
