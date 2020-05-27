@@ -100,6 +100,8 @@ DukPy Install and set script filename like 'filename.es6' and run.
 Then automatically save to 'filename.js' and delivered.
 
 ## History
+- 0.1.9
+minor bug fix
 - 0.1.8   
 minor update, add error comment
 - 0.1.7   

@@ -1,4 +1,4 @@
-# version 0.1.8
+# version 0.1.9
 
 import subprocess, configparser, shutil, os, sys, ftplib
 
@@ -149,8 +149,7 @@ elif(sys.argv[1]=="ftpCheck"):
             ftpGetLists(sectionMap)
     sys.exit()
 else:
-    commonprefix = os.path.commonprefix([sys.argv[1], os.getcwd()])
-    source = os.path.relpath(sys.argv[1], commonprefix)
+    source = os.path.relpath(sys.argv[1], os.getcwd())
     # single file ignore check
     for ig in ignored:
         if(source.startswith(ig)):
