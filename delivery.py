@@ -1,4 +1,4 @@
-# version 0.1.9
+# version 0.1.10
 
 import subprocess, configparser, shutil, os, sys, ftplib
 
@@ -159,18 +159,34 @@ else:
 
 # es6 translate
 for i, src in enumerate(source):
-    if(not src.endswith('.es6') and common['es6_translate'] != 'Y'):
+    if(not src.endswith('.es6') and not src.endswith('.ts') and common['es6_translate'] != 'Y'):
         continue
+        
+    # typescript
+    if(src.endswith('.ts')):
+        try:
+            subprocess.check_call("tsc --target esnext "+src, shell=True)
+            src = src[:-2]+"js"
+            print("[Typescript to ESNEXT]")
+        except subprocess.CalledProcessError:
+            print("[Typescript compile Error]")
+
     f = open(src, 'rt', encoding="utf-8")
     src_str = f.read()
     f.close()
+
     try:
-        print("[Translate:ES6 to ES5]")
         import dukpy
+        if(src.endswith('.es6')):
+            print("[Translate:ES6 to ES5]")
+            source[i] = src[:-3]+"js"
+        elif(src.endswith('.js')):
+            print("[Translate:ESNEXT to ES5]")
+            source[i] = src[:-2]+"js"
         src_str = dukpy.babel_compile(src_str)['code']
     except ImportError:
-        print("[Translate:ES6 to ES5 - Failed]")
-    source[i] = src[:-3]+"js"
+        print("[Translate - Failed]")
+        
     print("CREATE "+source[i])
     f = open(source[i], 'wt', encoding="utf-8")
     f.write(src_str+" ")

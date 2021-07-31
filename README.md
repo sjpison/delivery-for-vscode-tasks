@@ -94,12 +94,18 @@ location = c:\delivery_test
 
 delivery.py and delivery-conf.ini files copy to .vscode/
 
+## TypeScript compile
+if you want compile TypeScript then install TypeScript globally by npm. "npm install -g typescript".
+'filename.ts' save then automatically save to 'filename.js' and delivered.
+
 ## ES6 to ES5 translate
 if you want translate ES6 to ES5 then use DukPy(pypi.org/project/dukpy).   
 DukPy Install and set script filename like 'filename.es6' and run.   
 Then automatically save to 'filename.js' and delivered.
 
 ## History
+- 0.1.10
+typescript compile support
 - 0.1.9
 minor bug fix
 - 0.1.8   
