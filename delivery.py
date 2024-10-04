@@ -1,4 +1,4 @@
-# version 0.1.10
+# version 0.1.11
 
 import subprocess, configparser, shutil, os, sys, ftplib
 
@@ -184,6 +184,9 @@ for i, src in enumerate(source):
             print("[Translate:ESNEXT to ES5]")
             source[i] = src[:-2]+"js"
         src_str = dukpy.babel_compile(src_str)['code']
+    except ModuleNotFoundError:
+        print("[Translate - Failed - dukpy is not installed, You need to install Dukpy]")
+        print("[pip install dukpy]")
     except ImportError:
         print("[Translate - Failed]")
         
