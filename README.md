@@ -104,6 +104,8 @@ DukPy Install and set script filename like 'filename.es6' and run.
 Then automatically save to 'filename.js' and delivered.
 
 ## History
+- 0.1.11
+dukpy error handling
 - 0.1.10
 typescript compile support
 - 0.1.9
